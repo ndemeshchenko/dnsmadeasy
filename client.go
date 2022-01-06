@@ -48,7 +48,7 @@ func New(dme *DMEClient) (*DMEClient, error) {
 		},
 	}
 
-	dme.dmeClient = &http.Client{Transport: tr}
+	dme.dmeClient = &http.Client{Transport: tr, Timeout: 30 * time.Second}
 
 	return dme, nil
 }
