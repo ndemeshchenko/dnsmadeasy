@@ -101,7 +101,10 @@ func (dme *DMEClient) fireRequest(req *http.Request, dst interface{}) error {
 
 	genericParsingError := &GenericParsingError{}
 
-	json.Unmarshal(body, genericParsingError)
+	err = json.Unmarshal(body, genericParsingError)
+	if err != nil {
+		return err
+	}
 	if len(genericParsingError.Error) > 0 {
 		return fmt.Errorf(strings.Join(genericParsingError.Error, "\n"))
 	}
