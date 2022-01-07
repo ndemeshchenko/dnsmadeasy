@@ -3,8 +3,6 @@ package dnsmadeasy_test
 import (
 	"flag"
 	"fmt"
-	"regexp"
-	"sync"
 	"testing"
 	"time"
 
@@ -13,7 +11,7 @@ import (
 
 var (
 	accessKey = flag.String("APIAccessKey", "", "DNSMadeEasy API Access Key")
-	secretKey = flag.String("Secret Key", "", "DNSMadeEasy API Secret Key")
+	secretKey = flag.String("APISecretKey", "", "DNSMadeEasy API Secret Key")
 	// cleanupTest    = flag.Bool("purge", true, "cleanup all gotest-* domains from sandbox account")
 	testDomains    = make(map[string]*dnsmadeasy.Domain)
 	domainBaseName = "dmetest"
@@ -64,33 +62,35 @@ func genDomain(client *dnsmadeasy.DMEClient) (*dnsmadeasy.Domain, error) {
 	return domain, err
 }
 
-func purgeSandboxDomains(client *dnsmadeasy.DMEClient) error {
-	domains, err := client.Domains()
-	if err != nil {
-		return err
-	}
-
-	testDomainsPatter := regexp.MustCompile(fmt.Sprintf("^%s-\\d+\\.io$", domainBaseName))
-	var wg sync.WaitGroup
-	for _, domain := range domains {
-		if !testDomainsPatter.MatchString(domain.Name) {
-			fmt.Printf("domain %s doesn't match pattern", domain.Name)
-			continue
-		}
-
-		wg.Add(1)
-		go func(rmDomain dnsmadeasy.Domain) {
-			defer wg.Done()
-			fmt.Printf("Deleting %s\n", rmDomain.Name)
-
-			err := client.DeleteDomain(rmDomain.ID, 60*time.Second)
-			if err != nil {
-				fmt.Printf("Can't delete domain %s. error: %v\n", rmDomain.Name, err)
-			}
-		}(domain)
-
-	}
-	wg.Wait()
-
-	return nil
-}
+// commented because of domain deletion broken on DNSMadeEasy Sandbox API
+//
+//func purgeSandboxDomains(client *dnsmadeasy.DMEClient) error {
+//	domains, err := client.Domains()
+//	if err != nil {
+//		return err
+//	}
+//
+//	testDomainsPatter := regexp.MustCompile(fmt.Sprintf("^%s-\\d+\\.io$", domainBaseName))
+//	var wg sync.WaitGroup
+//	for _, domain := range domains {
+//		if !testDomainsPatter.MatchString(domain.Name) {
+//			fmt.Printf("domain %s doesn't match pattern", domain.Name)
+//			continue
+//		}
+//
+//		wg.Add(1)
+//		go func(rmDomain dnsmadeasy.Domain) {
+//			defer wg.Done()
+//			fmt.Printf("Deleting %s\n", rmDomain.Name)
+//
+//			err := client.DeleteDomain(rmDomain.ID, 60*time.Second)
+//			if err != nil {
+//				fmt.Printf("Can't delete domain %s. error: %v\n", rmDomain.Name, err)
+//			}
+//		}(domain)
+//
+//	}
+//	wg.Wait()
+//
+//	return nil
+//}

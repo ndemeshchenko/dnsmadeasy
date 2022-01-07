@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Get list of domains managed by DNSMadeEasy
+// Domains wrapper for API call to fetch domains
 func (dme *DMEClient) Domains() ([]Domain, error) {
 	req, err := dme.requestTemplate("GET", "dns/managed", nil)
 	if err != nil {
@@ -19,13 +19,13 @@ func (dme *DMEClient) Domains() ([]Domain, error) {
 	if err != nil {
 		return nil, err
 	}
-	data := []Domain{}
+	var data []Domain
 	err = json.Unmarshal(genericParsingResponse.Data, &data)
 
 	return data, err
 }
 
-// Get summary for a single domain managed by DNSMadeEasy
+// Domain wrapper for API call to fetch domain
 func (dme *DMEClient) Domain(domainID int) (*Domain, error) {
 	uri := fmt.Sprintf("dns/managed/%v", domainID)
 	req, err := dme.requestTemplate("GET", uri, nil)
@@ -42,6 +42,7 @@ func (dme *DMEClient) Domain(domainID int) (*Domain, error) {
 	return domain, err
 }
 
+// CreateDomain wrapper for API call to create a domain
 func (dme *DMEClient) CreateDomain(reqDomain *Domain) (*Domain, error) {
 	uri := "dns/managed"
 	payload, err := json.Marshal(reqDomain)
@@ -64,10 +65,12 @@ func (dme *DMEClient) CreateDomain(reqDomain *Domain) (*Domain, error) {
 	return retDomain, err
 }
 
+// DeleteDomain wrapper for API call to delete a domain
 func (dme *DMEClient) DeleteDomain(domainID int, timeout time.Duration) error {
 	return dme.delete(fmt.Sprintf("dns/managed/%v", domainID), timeout)
 }
 
+// Records wrapper for API call to fetch list of records
 func (dme *DMEClient) Records(domainID int) ([]Record, error) {
 	uri := fmt.Sprintf("dns/managed/%v/records", domainID)
 	req, err := dme.requestTemplate("GET", uri, nil)
@@ -81,7 +84,7 @@ func (dme *DMEClient) Records(domainID int) ([]Record, error) {
 		return nil, err
 	}
 
-	data := []Record{}
+	var data []Record
 	err = json.Unmarshal(genericParsingResponse.Data, &data)
 
 	return data, err

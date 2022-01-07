@@ -26,7 +26,7 @@ func TestDMEClient_CreateRecord(t *testing.T) {
 
 	fmt.Printf("test domain name: %s, id: %d", domain.Name, domain.ID)
 
-	rcrd := &dnsmadeasy.Record{
+	recordBody := &dnsmadeasy.Record{
 		Name:        "testme",
 		Type:        "A",
 		Value:       "1.1.1.1",
@@ -34,9 +34,9 @@ func TestDMEClient_CreateRecord(t *testing.T) {
 		GtdLocation: "DEFAULT",
 	}
 
-	newRecord, err := client.CreateRecord(domain.ID, rcrd)
+	newRecord, err := client.CreateRecord(domain.ID, recordBody)
 	if err != nil {
-		t.Errorf("Error creating record %s on domain %s. %s", rcrd.Name, domain.Name, err)
+		t.Errorf("Error creating record %s on domain %s. %s", recordBody.Name, domain.Name, err)
 	}
 
 	record, err := client.Record(domain.ID, newRecord.ID)
@@ -45,11 +45,11 @@ func TestDMEClient_CreateRecord(t *testing.T) {
 	}
 
 	assert.Equal(t, newRecord.ID, record.ID, "ID should be equal")
-	assert.Equal(t, rcrd.Name, record.Name, "Name should be equal")
-	assert.Equal(t, rcrd.Type, record.Type, "Type should be equal")
-	assert.Equal(t, rcrd.Value, record.Value, "Value should be equal")
-	assert.Equal(t, rcrd.Value, record.Value, "Value should be equal")
-	assert.Equal(t, rcrd.TTL, record.TTL, "TTL should be equal")
-	assert.Equal(t, rcrd.GtdLocation, record.GtdLocation, "GtdLocation should be equal")
+	assert.Equal(t, recordBody.Name, record.Name, "Name should be equal")
+	assert.Equal(t, recordBody.Type, record.Type, "Type should be equal")
+	assert.Equal(t, recordBody.Value, record.Value, "Value should be equal")
+	assert.Equal(t, recordBody.Value, record.Value, "Value should be equal")
+	assert.Equal(t, recordBody.TTL, record.TTL, "TTL should be equal")
+	assert.Equal(t, recordBody.GtdLocation, record.GtdLocation, "GtdLocation should be equal")
 
 }
